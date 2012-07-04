@@ -1,6 +1,6 @@
 <?php
 
-class User {
+abstract class User {
 
   private $username;
 
@@ -11,6 +11,9 @@ class User {
   public function getUsername() {
     return $this->username;
   }
+
+  public abstract function getUserStatus();
+
 }
 
 ?>
