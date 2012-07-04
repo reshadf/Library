@@ -35,7 +35,10 @@
 	}
 
 
-   	$car = new loginform();
+	$user = new User('Reshad');
+	echo $user->getUsername();
+
+
 
 
 	
