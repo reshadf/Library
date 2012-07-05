@@ -70,5 +70,29 @@
    	echo 'Hallo ' . $admin->getUsername() . '<br>';
    	echo 'is ' . $admin->getUserStatus();
 
-	
-?>
+   	echo '<br><br>';
+
+   	// create a new FormHandler object 
+	$form = new FormHandler(); 
+
+	// some fields.. (see manual for examples) 
+	$form->textField( "Naam", "naam", FH_STRING, 20, 40); 
+	$form->textField( "Leeftijd", "leeftijd", FH_INTEGER, 4, 2);
+	$form->textField( "Achternaam", "achternaam", FH_STRING, 20, 40); 
+
+	// button for submitting 
+	$form->submitButton(); 
+
+	// set the 'commit-after-form' function 
+	$form->onCorrect('doRun'); 
+
+	// display the form 
+	$form->flush(); 
+
+	// the 'commit-after-form' function 
+	function doRun( $data )  
+	{ 
+	    echo "Hello " . $data['naam'] . ", you are " . $data['leeftijd'] . " years old! and your lastname is " . $data['achternaam'] ; 
+	} 
+
+	?>
