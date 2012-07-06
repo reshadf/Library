@@ -95,4 +95,8 @@
 	    echo "Hello " . $data['naam'] . ", you are " . $data['leeftijd'] . " years old! and your lastname is " . $data['achternaam'] ; 
 	} 
 
+	$adress = new Url();
+
+	echo $adress->getUrl();
+
 	?>
