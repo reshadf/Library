@@ -34,51 +34,15 @@
 	    }
 	}
 
+	/**********************************************************************************************************************************************************************************************************************/
 
-	// $user = new User('Reshad');
-	// echo 'Hallo ' . $user->getUsername() . '<br>';
-
-	try 
-	{
-		$db = new PDO('mysql:host=localhost;dbname=portfolio', 'root', 'root');
-		$db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
-			$stmt = $db->query('SELECT id, name, password FROM members');
- 
-		while($row = $stmt->fetch(PDO::FETCH_ASSOC))
-		{
-	   		echo 'id: ' . $row['id'] . '<br/> ';
-	   		echo 'Naam: ' . $row['name'].'<br/> ';
-	   		echo 'password: ' . $row['password'].'<br/>'; //etc...
-   		}
-
-	} 
-	catch (PDOException $e) 
-	{
-		$foutmelding = 'Er is iets fout gegaan. Hieronder vind u meer info over de fout, graag de Webmaster contacteren met de foutmelding<br/>'; 
-		$foutmelding .= 'regel: ' . $e->getLine() . '<br>';
-		$foutmelding .= 'Bestand: ' . $e->getFile() . '<br>';
-		$foutmelding .= 'Error melding: ' . $e->getMessage();
-		echo $foutmelding;
-	}
-
-   	$db = NULL;
-
-
-   	$admin = new Admin('Reshad');
-
-   	echo 'Hallo ' . $admin->getUsername() . '<br>';
-   	echo 'is ' . $admin->getUserStatus();
-
-   	echo '<br><br>';
 
    	// create a new FormHandler object 
 	$form = new FormHandler(); 
 
 	// some fields.. (see manual for examples) 
-	$form->textField( "Naam", "naam", FH_STRING, 20, 40); 
-	$form->textField( "Leeftijd", "leeftijd", FH_INTEGER, 4, 2);
-	$form->textField( "Achternaam", "achternaam", FH_STRING, 20, 40); 
+	$form->textField( "Naam", "name", FH_STRING, 20, 40); 
+	$form->passField("Wachtwoord", "pass", FH_PASSWORD);
 
 	// button for submitting 
 	$form->submitButton(); 
@@ -90,13 +54,53 @@
 	$form->flush(); 
 
 	// the 'commit-after-form' function 
-	function doRun( $data )  
+	function doRun()  
 	{ 
-	    echo "Hello " . $data['naam'] . ", you are " . $data['leeftijd'] . " years old! and your lastname is " . $data['achternaam'] ; 
+		$msg = '';
+		$username = mysql_real_escape_string($_POST['name']);
+		$pass = mysql_real_escape_string($_POST['pass']);
+	    try 
+		{
+			$db = new PDO('mysql:host=localhost;dbname=testData', 'root', 'root');
+			$db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+				$stmt = $db->prepare('	SELECT 
+												username, pass 
+										FROM 	
+												testTable
+										WHERE
+												username = :name
+										AND 	
+												pass = :pass
+
+									');
+
+				$stmt->bindParam(':name', $username, PDO::PARAM_STR);
+				$stmt->bindParam(':pass', $pass, PDO::PARAM_STR);
+
+				$stmt->execute();
+				
+				$result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+				if($result == false)
+				{
+					$msg = 'sorry could not connect';
+				}
+				else
+				{
+					$_SESSION['name'] = $username;
+
+					$msg = 'logged in as ' . $username;
+				}
+				
+		} 
+		catch (PDOException $e) 
+		{
+			echo "Error:" . $e;
+		}
+
+		echo $msg;
+
+	   	$db = NULL;
 	} 
-
-	$adress = new Url();
-
-	echo $adress->getUrl();
-
-	?>
+?>
