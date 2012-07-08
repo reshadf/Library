@@ -2,7 +2,6 @@
 	ini_set('display_errors', 1);
 	error_reporting(E_ALL|E_STRICT);
 
-
 	/**
 	*
 	* 	auto loader 
@@ -36,71 +35,96 @@
 
 	/**********************************************************************************************************************************************************************************************************************/
 
+	if(isset($_COOKIE['Login']))
+	{
+		echo 'u bent al ingelogd';
+	}
+	else
+	{
+		// create a new FormHandler object 
+		$form = new FormHandler(); 
 
-   	// create a new FormHandler object 
-	$form = new FormHandler(); 
+		// some fields.. (see manual for examples) 
+		$form->textField( "Naam", "name", FH_STRING, 20, 40); 
+		$form->passField("Wachtwoord", "pass", FH_PASSWORD);
 
-	// some fields.. (see manual for examples) 
-	$form->textField( "Naam", "name", FH_STRING, 20, 40); 
-	$form->passField("Wachtwoord", "pass", FH_PASSWORD);
+		//$autologin = $form->checkbox("Remember me:", "remember", 1);
 
-	// button for submitting 
-	$form->submitButton(); 
+		// button for submitting 
+		$form->submitButton(); 
 
-	// set the 'commit-after-form' function 
-	$form->onCorrect('doRun'); 
+		// set the 'commit-after-form' function 
+		$form->onCorrect('doRun'); 
 
-	// display the form 
-	$form->flush(); 
+		// display the form 
+		$form->flush(); 
+	}
 
 	// the 'commit-after-form' function 
-	function doRun()  
-	{ 
-		$msg = '';
-		$username = mysql_real_escape_string($_POST['name']);
-		$pass = mysql_real_escape_string($_POST['pass']);
-	    try 
-		{
-			$db = new PDO('mysql:host=localhost;dbname=testData', 'root', 'root');
-			$db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+		function doRun()  
+		{ 
+			$msg = '';
+			$username = mysql_real_escape_string($_POST['name']);
+			$pass = mysql_real_escape_string($_POST['pass']);
+		    try 
+			{
+				$db = new PDO('mysql:host=localhost;dbname=testData', 'root', 'root');
+				$db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-				$stmt = $db->prepare('	SELECT 
-												username, pass 
-										FROM 	
-												testTable
-										WHERE
-												username = :name
-										AND 	
-												pass = :pass
+					$stmt = $db->prepare('	SELECT 
+													username, pass 
+											FROM 	
+													testTable
+											WHERE
+													username = :name
+											AND 	
+													pass = :pass
 
-									');
+										');
 
-				$stmt->bindParam(':name', $username, PDO::PARAM_STR);
-				$stmt->bindParam(':pass', $pass, PDO::PARAM_STR);
+					$stmt->bindParam(':name', $username, PDO::PARAM_STR);
+					$stmt->bindParam(':pass', $pass, PDO::PARAM_STR);
 
-				$stmt->execute();
-				
-				$result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+					$stmt->execute();
+					
+					$result = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-				if($result == false)
-				{
-					$msg = 'sorry could not connect';
-				}
-				else
-				{
-					$_SESSION['name'] = $username;
+					if($result == false)
+					{
+						$msg = 'sorry could not connect';
+					}
+					else
+					{
+						//$_SESSION['name'] = $username;
 
-					$msg = 'logged in as ' . $username;
-				}
-				
+						/**
+						 * Create a cookie with the name "myCookieName" and value "testing cookie value"
+						 */
+						$cookie = new Cookie();
+						// Set cookie name
+						$cookie->setName('Login');
+						// Set cookie value
+						$cookie->setValue("testing cookie value");
+						// Set cookie expiration time
+						$cookie->setTime("+1 hour");
+						// Create the cookie
+						$cookie->create();
+						
+
+						// Delete the cookie.
+						//$cookie->delete();
+						$msg = 'logged in as ' . $username . '<br>';
+						
+					}
+					
+			} 
+			catch (PDOException $e) 
+			{
+				echo "Error:" . $e;
+			}
+
+			echo $msg;
+
+		   	$db = NULL;
 		} 
-		catch (PDOException $e) 
-		{
-			echo "Error:" . $e;
-		}
-
-		echo $msg;
-
-	   	$db = NULL;
-	} 
 ?>
