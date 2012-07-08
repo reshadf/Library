@@ -78,7 +78,37 @@
 	// some fields.. (see manual for examples) 
 	$form->textField( "Naam", "naam", FH_STRING, 20, 40); 
 	$form->textField( "Leeftijd", "leeftijd", FH_INTEGER, 4, 2);
-	$form->textField( "Achternaam", "achternaam", FH_STRING, 20, 40); 
+	$form->textField( "Achternaam", "achternaam", FH_STRING, 20, 40);
+	$form->colorpicker("Color", "color"); 
+
+	$config = array ( 
+					  "path"       => "./uploads",   
+					  "type"       => "jpg jpeg png gif", 
+					  "mime"       => array( 
+					    "jpg" => "image/jpeg image/jpg", 
+					    "png" => "image/png", 
+					    "gif" => "image/gif" 
+					  ), 
+					  "size"       => 1000, 
+					  "name"       => "test", 
+					  "width"      => 800, 
+					  "height"     => 600, 
+					  "required"   => false, 
+					  "exists"     => "rename" 
+					);
+
+	$form->uploadField("Image", "image", $config);
+
+	$developer = array( 
+					  "Reshad", 
+					  "Evert", 
+					  "De koe in de tuin" 
+					); 
+
+	$form->checkBox("Favorite Developer", "developer", $developer, null, false);
+
+	$form -> dateField("Geboortedatum", "geboortedatum");
+	$form->CaptchaField("Captcha verificatie", "code");
 
 	// button for submitting 
 	$form->submitButton(); 
