@@ -48,10 +48,16 @@
 		$form->textField( "Naam", "name", FH_STRING, 20, 40); 
 		$form->passField("Wachtwoord", "pass", FH_PASSWORD);
 
+
 		//$autologin = $form->checkbox("Remember me:", "remember", 1);
+
+		$form->textField( "Naam", "name", FH_STRING, 20, 40); 
+		$form->passField("Wachtwoord", "pass", FH_PASSWORD);
+
 
 		// button for submitting 
 		$form->submitButton(); 
+
 
 		// set the 'commit-after-form' function 
 		$form->onCorrect('doRun'); 
@@ -127,4 +133,4 @@
 
 		   	$db = NULL;
 		} 
-?>
+
